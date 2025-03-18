@@ -45,3 +45,24 @@ class UserChangeForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ["phone", "password", "is_active", "is_admin"]
+
+def start_with_0(value):
+    print(type(value))
+    print('*'*50)
+    if value[0]!='0':
+        raise  forms.ValidationError('phone should start with 0')
+    if value[1]=='0':
+        raise forms.ValidationError('phone should not second char is 0')
+
+class LoginForm(forms.Form):
+    phone = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}), validators=[start_with_0])
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+
+    def clean_phone(self):
+        phone = self.cleaned_data['phone']
+        if len(phone) != 11:
+            raise ValidationError(
+                'Invalid value: %(value)s is not 11 characters long',
+                code='invalid_phone',
+                params={'value': f'{phone}'},
+            )

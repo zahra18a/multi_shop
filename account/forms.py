@@ -56,7 +56,7 @@ def start_with_0(value):
         raise forms.ValidationError('phone should not second char is 0')
 
 class LoginForm(forms.Form):
-    phone = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}), validators=[start_with_0])
+    phone = forms.CharField(label='مبایل', widget=forms.TextInput(attrs={'class': 'form-control'}), validators=[start_with_0])
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
 
     def clean_phone(self):

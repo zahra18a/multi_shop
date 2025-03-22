@@ -2,7 +2,7 @@ from django import forms
 from django.core import validators
 from django.core.exceptions import ValidationError
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
-from .models import User
+from .models import User, Address
 
 
 class UserCreationForm(forms.ModelForm):
@@ -67,6 +67,12 @@ class LoginForm(forms.Form):
                 code='invalid_phone',
                 params={'value': f'{phone}'},
             )
+
+class AddressCreationForm(forms.ModelForm):
+    user=forms.IntegerField(required=False)
+    class Meta:
+        model = Address
+        fields = "__all__"
 
 class RegisterForm(forms.Form):
     phone= forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}), validators=[start_with_0, validators.MaxLengthValidator(11)])

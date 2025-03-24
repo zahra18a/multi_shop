@@ -48,7 +48,7 @@ class UserChangeForm(forms.ModelForm):
         fields = ["phone", "password", "is_active", "is_admin"]
 
 def start_with_0(value):
-    print(type(value))
+    print('Validator received value:', value)
     print('*'*50)
     if value[0]!='0':
         raise  forms.ValidationError('phone should start with 0')
@@ -60,13 +60,34 @@ class LoginForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
 
     def clean_phone(self):
-        phone = self.cleaned_data['phone']
+        phone = self.cleaned_data.get('phone')
         if len(phone) != 11:
             raise ValidationError(
                 'Invalid value: %(value)s is not 11 characters long',
                 code='invalid_phone',
                 params={'value': f'{phone}'},
             )
+        return phone
+
+    # def clean_phone:
+    #     phone = self.cleaned_data.get('phone')
+    #     if phone is None:
+    #         raise ValidationError('Phone number is required')
+    #
+    #     if phone[0] != '0':
+    #         raise ValidationError('Phone should start with 0')
+    #
+    #     if phone[1] == '0':
+    #         raise ValidationError('Phone should not have the second character as 0')
+    #
+    #     if len(phone) != 11:
+    #         raise ValidationError(
+    #             'Invalid value: %(value)s is not 11 characters long',
+    #             code='invalid_phone',
+    #             params={'value': f'{phone}'}
+    #         )
+    #
+    #     return phone
 
 class AddressCreationForm(forms.ModelForm):
     user=forms.IntegerField(required=False)

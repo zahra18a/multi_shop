@@ -5,7 +5,7 @@ from django.views import View
 from random import randint
 from django.utils.crypto import get_random_string
 from uuid import uuid4
-from .forms import LoginForm, RegisterForm, CheckOtpForm
+from .forms import LoginForm, RegisterForm, CheckOtpForm, AddressCreationForm
 import ghasedak_sms
 
 from .models import Otp, User
@@ -24,6 +24,9 @@ class UserLogin(View):
             user = authenticate(username=cd['phone'], password=cd['password'])
             if user is not None:
                 login(request, user)
+                next_page=request.GET.get('next')
+                if next_page:
+                    return redirect(next_page)
                 return redirect('/')
             else:
                 form.add_error('phone', 'phone or password is invalid')
@@ -88,6 +91,20 @@ class CheckOtpView(View):
 
         return render(request, 'account/check_otp.html', {'form': form})
 
+class AddAddressView(View):
+    def post(self, request):
+        form = AddressCreationForm(request.POST)
+        if form.is_valid():
+            address = form.save(commit=False)
+            address.user = request.user
+            address.save()
+            next_page=request.GET.get('next')
+            if next_page:
+                return redirect(next_page)
+            return render(request,'account/add_address.html',{'form': form})
+    def get(self, request):
+        form = AddressCreationForm()
+        return render(request, 'account/add_address.html',{'form': form})
 
 def user_logout(request):
     logout(request)
